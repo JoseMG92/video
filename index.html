@@ -62,14 +62,17 @@
       border-radius: 14px;
       overflow: hidden;
       border: 1px solid rgba(255, 255, 255, .08);
+      background: black;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    iframe {
-      position: absolute;
-      inset: 0;
+    video {
       width: 100%;
       height: 100%;
-      border: 0;
+      object-fit: contain;
+      border-radius: 14px;
     }
 
     .footer {
@@ -91,19 +94,15 @@
       </div>
 
       <div class="player">
-        <!-- CAMBIAR URL -->
-        <iframe src="https://www.youtube.com/embed/m8ZzVAS0lgo" title="YouTube video player" frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          allowfullscreen loading="lazy">
-        </iframe>
-
+        <!-- Asegúrate de que el archivo 'video.mp4' esté en la misma carpeta que este HTML -->
+        <video controls preload="auto">
+          <source src="video.mp4" type="video/mp4">
+          Tu navegador no soporta el elemento de video HTML5.
+        </video>
       </div>
 
       <div class="footer">
-        <span>Para ti, con todo mi &hearts; </span>
-        <!-- CAMBIAR ACA -->
-        <span><a href="https://youtu.be/m8ZzVAS0lgo?si=ja-3ZJis6gJKsUei" target="_blank" rel="noopener">Abrir en
-            YouTube</a></span>
+        <span>Para ti, con todo mi ❤️</span>
       </div>
     </div>
   </div>
