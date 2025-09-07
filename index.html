@@ -6,83 +6,45 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Lo siento</title>
   <style>
-    :root {
-      --bg: #0f172a;
-      --card: #111827;
-      --text: #e5e7eb;
-      --muted: #9ca3af;
+    :root { --bg:#0f172a; --card:#111827; --text:#e5e7eb; --muted:#9ca3af; }
+    *{ box-sizing:border-box }
+    body{
+      margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, "Helvetica Neue", Arial;
+      background: radial-gradient(60% 80% at 50% 20%, #1f2937 0%, #0b1020 100%); color:var(--text);
     }
+    .wrap{ min-height:100dvh; display:grid; place-items:center; padding:24px; }
+    .card{
+      width:100%; max-width:920px; background: color-mix(in oklab, var(--card), black 10%);
+      border:1px solid rgba(255,255,255,.08); border-radius:20px; box-shadow:0 10px 30px rgba(0,0,0,.45); padding:20px;
+    }
+    .header{ display:flex; justify-content:space-between; align-items:center; gap:16px; margin-bottom:14px; }
+    h1{ font-size:clamp(20px,2.5vw,28px); margin:0; letter-spacing:.2px; }
+    .player{
+      position:relative; width:100%; aspect-ratio:16/9; border-radius:14px; overflow:hidden;
+      border:1px solid rgba(255,255,255,.08); background:black; display:flex; align-items:center; justify-content:center;
+    }
+    video{ width:100%; height:100%; object-fit:contain; border-radius:14px; }
 
-    * {
-      box-sizing: border-box;
-    }
+    .footer{ display:flex; justify-content:space-between; align-items:center; margin-top:14px; color:var(--muted); font-size:13px; }
 
-    body {
-      margin: 0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
-      background: radial-gradient(60% 80% at 50% 20%, #1f2937 0%, #0b1020 100%);
-      color: var(--text);
+    /* Modal */
+    .modal{
+      position:fixed; inset:0; display:none; place-items:center; background:rgba(0,0,0,.6); backdrop-filter:saturate(140%) blur(2px); padding:16px;
     }
-
-    .wrap {
-      min-height: 100dvh;
-      display: grid;
-      place-items: center;
-      padding: 24px;
+    .modal.open{ display:grid; }
+    .dialog{
+      width:min(520px, 95vw); background:#0b1020; border:1px solid rgba(255,255,255,.12); border-radius:16px; padding:20px;
+      box-shadow:0 10px 30px rgba(0,0,0,.5);
     }
-
-    .card {
-      width: 100%;
-      max-width: 920px;
-      background: color-mix(in oklab, var(--card), black 10%);
-      border: 1px solid rgba(255, 255, 255, .08);
-      border-radius: 20px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, .45);
-      padding: 20px;
+    .dialog h2{ margin:0 0 8px; font-size:20px; }
+    .dialog p{ margin:0 0 16px; color:var(--muted); }
+    .actions{ display:flex; justify-content:flex-end; gap:10px; }
+    .btn{
+      appearance:none; border:1px solid rgba(255,255,255,.14); background:#111827; color:#e5e7eb;
+      padding:10px 14px; border-radius:10px; cursor:pointer; font-weight:600;
     }
-
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-      margin-bottom: 14px;
-    }
-
-    h1 {
-      font-size: clamp(20px, 2.5vw, 28px);
-      margin: 0;
-      letter-spacing: .2px;
-    }
-
-    .player {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 16/9;
-      border-radius: 14px;
-      overflow: hidden;
-      border: 1px solid rgba(255, 255, 255, .08);
-      background: black;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    video {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      border-radius: 14px;
-    }
-
-    .footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 14px;
-      color: var(--muted);
-      font-size: 13px;
-    }
+    .btn.primary{ background:#2563eb; border-color:#2563eb; color:white; }
+    .hidden{ display:none; }
   </style>
 </head>
 
@@ -94,11 +56,11 @@
       </div>
 
       <div class="player">
-        <video controls preload="none" poster="portada.png">
+        <!-- Coloca tu archivo en la misma carpeta o en /media/video.mp4 y ajusta la ruta -->
+        <video id="video" controls preload="auto" poster="portada.jpg">
           <source src="video.mp4" type="video/mp4">
           Tu navegador no soporta el elemento de video HTML5.
         </video>
-
       </div>
 
       <div class="footer">
@@ -106,6 +68,57 @@
       </div>
     </div>
   </div>
-</body>
 
+  <!-- Modal -->
+  <div id="modal" class="modal" aria-hidden="true" role="dialog" aria-labelledby="q-title" aria-describedby="q-desc">
+    <div class="dialog">
+      <h2 id="q-title">Te pregunto...</h2>
+      <p id="q-desc">¿Me darías otra oportunidad para que podamos seguir siendo Pinchechuela & Coso team?</p>
+      <div class="actions">
+        <button id="btn-no" class="btn">No</button>
+        <button id="btn-si" class="btn primary">Sí</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const video = document.getElementById('video');
+    const modal = document.getElementById('modal');
+    const btnSi = document.getElementById('btn-si');
+    const btnNo = document.getElementById('btn-no');
+
+    // Abre el modal cuando termina el video
+    video.addEventListener('ended', () => {
+      modal.classList.add('open');
+      modal.setAttribute('aria-hidden', 'false');
+      btnSi.focus();
+    });
+
+    btnSi.addEventListener('click', () => {
+      modal.classList.remove('open');
+      modal.setAttribute('aria-hidden', 'true');
+      location.href = 'https://wa.me/5214561299171?text=¡Sí!';
+    });
+
+    btnNo.addEventListener('click', () => {
+      modal.classList.remove('open');
+      modal.setAttribute('aria-hidden', 'true');
+      location.href = 'https://wa.me/5214561299171?text=¡No, esto definitivamente ya se terminó!';
+    });
+
+    // Cerrar con ESC o clic fuera
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal.classList.contains('open')) {
+        modal.classList.remove('open');
+        modal.setAttribute('aria-hidden', 'true');
+      }
+    });
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) { // click en el fondo
+        modal.classList.remove('open');
+        modal.setAttribute('aria-hidden', 'true');
+      }
+    });
+  </script>
+</body>
 </html>
