@@ -77,6 +77,7 @@
       <div class="actions">
         <button id="btn-no" class="btn">No</button>
         <button id="btn-si" class="btn primary">Sí</button>
+        <button id="btn-maybe" class="btn">Lo pensaré :/</button>
       </div>
     </div>
   </div>
@@ -86,6 +87,7 @@
     const modal = document.getElementById('modal');
     const btnSi = document.getElementById('btn-si');
     const btnNo = document.getElementById('btn-no');
+    const btnMaybe = document.getElementById('btn-maybe');
 
     // Abre el modal cuando termina el video
     video.addEventListener('ended', () => {
@@ -104,6 +106,12 @@
       modal.classList.remove('open');
       modal.setAttribute('aria-hidden', 'true');
       location.href = 'https://wa.me/5214561299171?text=¡No, esto definitivamente ya se terminó!';
+    });
+
+    btnMaybe.addEventListener('click', () => {
+      modal.classList.remove('open');
+      modal.setAttribute('aria-hidden', 'true');
+      location.href = 'https://wa.me/5214561299171?text=¡Lo pensaré unos días!';
     });
 
     // Cerrar con ESC o clic fuera
